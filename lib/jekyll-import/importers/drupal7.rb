@@ -32,10 +32,13 @@ EOS
                        n.created,
                        n.status,
                        n.type,
+                       users.name,
                        #{tag_group}
                 FROM #{prefix}node AS n
                 LEFT JOIN #{prefix}field_data_body AS fdb
                   ON fdb.entity_id = n.nid AND fdb.entity_type = 'node'
+                LEFT JOIN #{prefix}users AS users
+                  ON users.uid = n.uid
                 WHERE (#{types})
 EOS
 
@@ -54,6 +57,7 @@ EOS
         data = {
           "excerpt"    => summary,
           "categories" => tags.split("|"),
+          "Person"     => sql_post_data[:name]
         }
 
         return data, content

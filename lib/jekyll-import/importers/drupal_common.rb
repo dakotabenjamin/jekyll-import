@@ -92,6 +92,7 @@ HTML
             data["layout"] = post[:type]
             title = data["title"] = post[:title].strip.force_encoding("UTF-8")
             time = data["created"] = post[:created]
+            author = data["name"]
 
             # Get the relevant fields as a hash and delete empty fields
             data = data.delete_if { |_k, v| v.nil? || v == "" }.each_pair do |_k, v|
