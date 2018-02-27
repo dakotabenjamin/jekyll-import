@@ -89,7 +89,7 @@ HTML
             # Get required fields
             data, content = self.post_data(post)
 
-            data["layout"] = post[:type]
+            # data["layout"] = post[:type]
             title = data["title"] = post[:title].strip.force_encoding("UTF-8")
             time = data["created"] = post[:created]
             author = data["name"]
