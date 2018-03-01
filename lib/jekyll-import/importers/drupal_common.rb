@@ -95,7 +95,7 @@ HTML
             author = data["name"]
 
             # Get the relevant fields as a hash and delete empty fields
-            data = data.delete_if { |_k, v| v.nil? || v == "" }.each_pair do |_k, v|
+            data = data.delete_if { |_k, v| v.nil? || v == "" || v == "[]" }.each_pair do |_k, v|
               ((v.is_a? String) ? v.force_encoding("UTF-8") : v)
             end
 
@@ -105,7 +105,7 @@ HTML
             dir = is_published ? dirs[:_posts] : dirs[:_drafts]
             slug = title.strip.downcase.gsub(%r!(&|&amp;)!, " and ").gsub(%r![\s\.\/\\]!, "-").gsub(%r![^\w-]!, "").gsub(%r![-_]{2,}!, "-").gsub(%r!^[-_]!, "").gsub(%r![-_]$!, "")
             if slug.length > 100
-              slug = slug.byteslice(100)
+              slug = slug.byteslice(0, 100)
             end
             filename = Time.at(time).to_datetime.strftime("%Y-%m-%d-") + slug + ".md"
 
