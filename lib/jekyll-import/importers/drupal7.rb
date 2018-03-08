@@ -51,19 +51,22 @@ EOS
                        n.created,
                        n.status,
                        n.type,
-                       users.name,
+                       users.field_name_value as name,
+                       uname.name as uname,
                        project.projects,
                        (select title from node where node.nid = wg.wgid) as wgroup,
                        #{tag_group}
                 FROM #{prefix}node AS n
                 LEFT JOIN #{prefix}field_data_body AS fdb
                   ON fdb.entity_id = n.nid AND fdb.entity_type = 'node'
-                LEFT JOIN #{prefix}users AS users
-                  ON users.uid = n.uid
+                LEFT JOIN #{prefix}users AS uname
+                  ON uname.uid = n.uid
                 LEFT JOIN (#{wgroup}) as wg
                   ON n.nid = wg.nid
                 LEFT JOIN (#{proj}) as project
                   ON project.nid = n.nid
+                LEFT JOIN #{prefix}field_data_field_name AS users
+                  ON users.entity_id = n.uid
                 WHERE (#{types})
 EOS
 
@@ -85,7 +88,7 @@ EOS
 
         data = {
           "Summary Text"    => summary,
-          "Person"          => sql_post_data[:name],
+          "Person"          => sql_post_data[:name].to_s.empty? ? sql_post_data[:uname] : sql_post_data[:name],
           "date"            => time,
           "Working Group"   => wg.split("|"),
           "Projects"        => projects.split("|"),
