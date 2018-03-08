@@ -78,17 +78,18 @@ EOS
         content = sql_post_data[:body_value].to_s
         summary = sql_post_data[:body_summary].to_s
         tags = (sql_post_data[:tags] || "").downcase.strip
-        time = sql_post_data[:created]
+        time = Time.at(sql_post_data[:created]).to_datetime.strftime("%Y-%m-%d %H:%M:%S Z").to_s
+        date = Time.at(sql_post_data[:created]).to_datetime.strftime("%Y-%m-%d").to_s
         wg = (sql_post_data[:wgroup] || "")
         projects = (sql_post_data[:projects] || "")
 
         data = {
           "Summary Text"    => summary,
           "Person"          => sql_post_data[:name],
-          "date"            => Time.at(time).to_datetime.strftime("%Y-%m-%d %H:%M:%S Z").to_s,
+          "date"            => time,
           "Working Group"   => wg.split("|"),
-          "Projects"        => projects.split("|")
-
+          "Projects"        => projects.split("|"),
+          "permalink"       => 'updates/' + date + '_' + sql_post_data[:title].to_s.tr(':,.','').downcase.gsub(' ', '_').byteslice(0,80)
         }
 
         return data, content
