@@ -62,7 +62,7 @@ module JekyllImport
           src_dir = conf["source"]
 
           dirs = {
-            :_posts   => File.join(src_dir, "_posts").to_s,
+            :_posts   => File.join(src_dir, "_projects").to_s,
             :_drafts  => File.join(src_dir, "_drafts").to_s,
             :_layouts => Jekyll.sanitized_path(src_dir, conf["layouts_dir"].to_s),
           }
@@ -98,15 +98,19 @@ HTML
               ((v.is_a? String) ? v.force_encoding("UTF-8") : v)
             end
 
+            data["Duration"] = data["Duration"].delete_if { |_k, v| v.nil? || v == "" || v == "[]" }.each_pair do |_k, v|
+              ((v.is_a? String) ? v.force_encoding("UTF-8") : v)
+            end
+
             # Construct a Jekyll compatible file name
             is_published = post[:status] == 1
             node_id = post[:nid]
-            dir = is_published ? dirs[:_posts] : dirs[:_drafts]
+            dir = dirs[:_posts]
             slug = title.strip.downcase.gsub(%r!(&|&amp;)!, " and ").gsub(%r![\s\.\/\\]!, "-").gsub(%r![^\w-]!, "").gsub(%r![-_]{2,}!, "-").gsub(%r!^[-_]!, "").gsub(%r![-_]$!, "")
             if slug.length > 100
               slug = slug.byteslice(0, 100)
             end
-            filename = Time.at(time).to_datetime.strftime("%Y-%m-%d-") + slug + ".md"
+            filename = slug + ".md"
 
             # Write out the data and content to file
             File.open("#{dir}/#{filename}", "w") do |f|
