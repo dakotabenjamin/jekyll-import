@@ -62,7 +62,7 @@ module JekyllImport
           src_dir = conf["source"]
 
           dirs = {
-            :_posts   => File.join(src_dir, "_posts").to_s,
+            :_posts   => File.join(src_dir, "_people").to_s,
             :_drafts  => File.join(src_dir, "_drafts").to_s,
             :_layouts => Jekyll.sanitized_path(src_dir, conf["layouts_dir"].to_s),
           }
@@ -90,11 +90,11 @@ HTML
             data, content = self.post_data(post)
 
             # data["layout"] = post[:type]
-            title = data["title"] = post[:title].strip.force_encoding("UTF-8")
-            time = data["created"] = post[:created]
+            title = data["title"] # = post[:title].strip.force_encoding("UTF-8")
+            time = data["date"] = Time.at(post[:created]).to_datetime.strftime("%Y-%m-%d %H:%M:%S Z").to_s
 
             # Get the relevant fields as a hash and delete empty fields
-            data = data.delete_if { |_k, v| v.nil? || v == "" || v == "[]" }.each_pair do |_k, v|
+            data = data.delete_if { |_k, v| v.nil? || v == "" || v.to_s == "[]" || v.to_s == "{}" }.each_pair do |_k, v|
               ((v.is_a? String) ? v.force_encoding("UTF-8") : v)
             end
 
@@ -106,7 +106,7 @@ HTML
             if slug.length > 100
               slug = slug.byteslice(0, 100)
             end
-            filename = Time.at(time).to_datetime.strftime("%Y-%m-%d-") + slug + ".md"
+            filename = slug + ".md"
 
             # Write out the data and content to file
             File.open("#{dir}/#{filename}", "w") do |f|
@@ -117,22 +117,22 @@ HTML
 
             # Make a file to redirect from the old Drupal URL
             next unless is_published
-            alias_query = self.aliases_query(prefix)
-            type = post[:type]
-
-            aliases = db[alias_query, "#{type}/#{node_id}"].all
-
-            aliases.push(:alias => "#{type}/#{node_id}")
-
-            aliases.each do |url_alias|
-              FileUtils.mkdir_p url_alias[:alias]
-              File.open("#{url_alias[:alias]}/index.md", "w") do |f|
-                f.puts "---"
-                f.puts "layout: refresh"
-                f.puts "refresh_to_post_id: /#{Time.at(time).to_datetime.strftime("%Y/%m/%d/") + slug}"
-                f.puts "---"
-              end
-            end
+            # alias_query = self.aliases_query(prefix)
+            # type = post[:type]
+            #
+            # aliases = db[alias_query, "#{type}/#{node_id}"].all
+            #
+            # aliases.push(:alias => "#{type}/#{node_id}")
+            #
+            # aliases.each do |url_alias|
+            #   FileUtils.mkdir_p url_alias[:alias]
+            #   File.open("#{url_alias[:alias]}/index.md", "w") do |f|
+            #     f.puts "---"
+            #     f.puts "layout: refresh"
+            #     f.puts "refresh_to_post_id: /#{Time.at(time).to_datetime.strftime("%Y/%m/%d/") + slug}"
+            #     f.puts "---"
+            #   end
+            # end
           end
         end
       end
