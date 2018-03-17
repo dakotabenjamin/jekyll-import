@@ -62,7 +62,7 @@ module JekyllImport
           src_dir = conf["source"]
 
           dirs = {
-            :_posts   => File.join(src_dir, "_people").to_s,
+            :_posts   => File.join(src_dir, "_where-we-work").to_s,
             :_drafts  => File.join(src_dir, "_drafts").to_s,
             :_layouts => Jekyll.sanitized_path(src_dir, conf["layouts_dir"].to_s),
           }
@@ -91,7 +91,7 @@ HTML
 
             # data["layout"] = post[:type]
             title = data["title"] # = post[:title].strip.force_encoding("UTF-8")
-            time = data["date"] = Time.at(post[:created]).to_datetime.strftime("%Y-%m-%d %H:%M:%S Z").to_s
+            # time = data["date"] = Time.at(post[:created]).to_datetime.strftime("%Y-%m-%d %H:%M:%S Z").to_s
 
             # Get the relevant fields as a hash and delete empty fields
             data = data.delete_if { |_k, v| v.nil? || v == "" || v.to_s == "[]" || v.to_s == "{}" }.each_pair do |_k, v|
@@ -101,7 +101,7 @@ HTML
             # Construct a Jekyll compatible file name
             is_published = post[:status] == 1
             node_id = post[:nid]
-            dir = is_published ? dirs[:_posts] : dirs[:_drafts]
+            dir = dirs[:_posts]
             slug = title.strip.downcase.gsub(%r!(&|&amp;)!, " and ").gsub(%r![\s\.\/\\]!, "-").gsub(%r![^\w-]!, "").gsub(%r![-_]{2,}!, "-").gsub(%r!^[-_]!, "").gsub(%r![-_]$!, "")
             if slug.length > 100
               slug = slug.byteslice(0, 100)
