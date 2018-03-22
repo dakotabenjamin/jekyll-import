@@ -117,7 +117,7 @@ EOS
           "Is Voting Member"  => nil,
           "Is Board Member"   => sql_post_data[:hot_leadership_role].nil? ? nil : true,
         }.delete_if { |_k, v| v.nil? || v == "" }
-        photo = sql_post_data[:picture].nil? ? nil : "/uploads/" + sql_post_data[:picture].to_s
+        photo = sql_post_data[:picture].nil? ? nil : "http://hotwww.s3-website-us-east-1.amazonaws.com/files/old/pictures/" + sql_post_data[:picture].to_s
 
 
         data = {
